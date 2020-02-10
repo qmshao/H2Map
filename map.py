@@ -154,7 +154,7 @@ def updateStationInfo(clickPt):
         index = clickPt['points'][0]['pointIndex']
         Id = stationInfo['id'][index]
         print(Id)
-        res = json.loads(requests.get('https://cafcp.org/cafcp-station-details/'+Id).text)
+        res = json.loads(requests.get('https://cafcp.org/cafcp-station-details/'+Id, verify=False).text)
         info =dash_dangerously_set_inner_html.DangerouslySetInnerHTML(res['node_view'])
 
     else:
