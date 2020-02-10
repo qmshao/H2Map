@@ -30,7 +30,7 @@ lon0 = 0
 
 for s in stations:
     name = re.search(r'title:(.*?)]', s['opts']['title']).group(1)
-    Id = name = re.search(r'station:(.*?),', s['opts']['title']).group(1).strip()
+    Id =  re.search(r'station:(.*?),', s['opts']['title']).group(1).strip()
     stationInfo['name'].append(name)
     stationInfo['id'].append(Id)
     stationInfo['lat'].append(s['latitude'])
