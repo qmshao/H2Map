@@ -1,0 +1,49 @@
+#react-entry-poin {
+	height: 100%;
+	width: 100%;
+	overflow:hidden;
+	position: fixed;
+}
+
+.renewable-content {
+	text-align: center;
+}
+
+.renewable-content svg {
+	width: 30%;
+	height: 30%;
+	transform: rotate(-90deg);
+	background: #0791AB;
+	border-radius: 50%;
+}
+
+.renewable-content circle {
+	stroke: #67CC02;
+}
+
+#h2station-info .node-wrapper .station-details-sidebar {
+	float: right;
+	width: 30%;
+	margin: 0 0 15px 0;
+	zoom: 0.8;
+	padding: 1em;
+}
+
+@media screen and (max-width:991px) {
+	 #h2station-info .node-wrapper .station-details-sidebar {
+		float: none;
+		width: 100%;
+		text-align: center;
+		margin: 20px 0 30px;
+	}
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#h2station-info::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE and Edge */
+#h2station-info {
+    -ms-overflow-style: none;
+}
