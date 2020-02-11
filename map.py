@@ -12,37 +12,16 @@ from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 
 import json
-import re
 import requests
 import dash_dangerously_set_inner_html
 
-with open('StationList.json', 'r') as f:
-    stations = json.load(f)    
+with open('StationInfo.json', 'r') as f:
+    stationInfo = json.load(f)    
 
-stationInfo = {}
-stationInfo['name'] = []
-stationInfo['lat'] = []
-stationInfo['lon'] = []
-stationInfo['id'] = []
 
-lat0 = 0
-lon0 = 0
 
-for s in stations:
-    name = re.search(r'title:(.*?)]', s['opts']['title']).group(1)
-    Id =  re.search(r'station:(.*?),', s['opts']['title']).group(1).strip()
-    stationInfo['name'].append(name)
-    stationInfo['id'].append(Id)
-    stationInfo['lat'].append(s['latitude'])
-    stationInfo['lon'].append(s['longitude'])
-
-    
-
-    lat0 += s['latitude']
-    lon0 += s['longitude']
-
-lat0 /= len(stationInfo['name'])
-lon0 /= len(stationInfo['name'])
+lat0 = (max(stationInfo['lat']) + min(stationInfo['lat']))/2
+lon0 = (max(stationInfo['lon']) + min(stationInfo['lon']))/2
 
 # print(stationLatitude)
 
@@ -149,13 +128,10 @@ app.layout = html.Div(
     ],
 )
 def updateStationInfo(clickPt):
-    print(clickPt)
     if (clickPt):
         index = clickPt['points'][0]['pointIndex']
-        Id = stationInfo['id'][index]
-        print(Id)
-        res = json.loads(requests.get('https://cafcp.org/cafcp-station-details/'+Id).text)
-        info =dash_dangerously_set_inner_html.DangerouslySetInnerHTML(res['node_view'])
+        print(stationInfo['name'][index] + ' clicked')
+        info =dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index])
 
     else:
         info = staticIntro
@@ -169,4 +145,4 @@ def updateStationInfo(clickPt):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
