@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Sun Feb  9 11:38:43 2020
@@ -145,4 +146,4 @@ def updateStationInfo(clickPt):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=False, host='0.0.0.0')
