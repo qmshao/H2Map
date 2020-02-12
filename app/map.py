@@ -16,7 +16,9 @@ import json
 import requests
 import dash_dangerously_set_inner_html
 
-with open('StationInfo.json', 'r') as f:
+import lib.userComponent as userComp
+
+with open('StationInfo2.json', 'r') as f:
     stationInfo = json.load(f)    
 
 
@@ -101,7 +103,10 @@ app.layout = html.Div(
                 html.Div(
                     # id = "station-map",
                     style={"width": "60%","height":"50em","float":"left", "display":"block","padding": "1em"},
-                    children = dcc.Graph(id="station-map", figure=fig, style={"height":"100%"}),
+                    children = [
+                        dcc.Graph(id="station-map", figure=fig, style={"height":"100%"}),
+                        userComp.generateModal()
+                    ],
                 ),
                 html.Div(
                     id = "h2station-info" ,
@@ -132,17 +137,30 @@ def updateStationInfo(clickPt):
     if (clickPt):
         index = clickPt['points'][0]['pointIndex']
         print(stationInfo['name'][index] + ' clicked')
-        info =dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index])
+
+        info = [ 
+            dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index]),
+            userComp.makeDashTable(stationInfo['table'][index])
+        ]
 
     else:
         info = staticIntro
-
-
-
-
     return info
 
+# ======= Callbacks for modal popup =======
+@app.callback(
+    Output("markdown", "style"),
+    [Input("h2station-info", "n_clicks"), Input("markdown_close", "n_clicks")],
+)
+def update_click_output(button_click, close_click):
+    ctx = dash.callback_context
 
+    if ctx.triggered:
+        prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        if prop_id == "h2station-info":
+            return {"display": "block"}
+
+    return {"display": "none"}
 
 # Running the server
 if __name__ == "__main__":
