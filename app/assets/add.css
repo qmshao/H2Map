@@ -47,11 +47,11 @@
 }
 
 
-#react-entry-poin, html, body {
+/* #react-entry-poin{
 	height: 100vh;
 	width: 100%;
 	overflow:hidden;
-}
+} */
 
 
 
@@ -98,24 +98,28 @@
 	  
 	#big-app-container {
 		padding: 1rem;
-		flex: none;
-		/* flex-direction: column; */
+		display: block;		
+		align-content: flex-start;
 	}
 
 
 	#h2station-container {
 		flex-direction: column;
+    	align-items: center;
+
 		padding:0;
 	}
 	#h2station-map-container {
 		width: 95%;
-		padding: 0.5rem;
-		height: calc((100vh - 5rem) *0.3 );
+		
+		padding: 1em;
+		height: calc((100vh - 12rem) *0.4 );
 	}
 
 	#h2station-info {
-		width: 100%;
-		height: calc((100vh - 5rem) *0.45 );
+		width: 95%;
+		height: calc((100vh - 12rem) *0.6 );
+		padding: 1rem;
 	}
 
 	#react-entry-poin, html, body {
