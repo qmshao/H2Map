@@ -1,12 +1,6 @@
-#react-entry-poin {
-	height: 100%;
-	width: 100%;
-	overflow:hidden;
-	position: fixed;
-}
-
 .renewable-content {
 	text-align: center;
+	display: none;
 }
 
 .renewable-content svg {
@@ -22,20 +16,24 @@
 }
 
 #h2station-info .node-wrapper .station-details-sidebar {
-	float: right;
-	width: 30%;
-	margin: 0 0 15px 0;
-	zoom: 0.8;
-	padding: 1em;
+	/* float: right; */
+	display:flex;
+	zoom: 0.75;
+	flex-direction: column;
+	/* position: relative; */
+	/* width: 15%;  */
+	/* margin: 0 0 15px 0;
+	
+	/* padding: 1em; */
 }
 
-@media screen and (max-width:991px) {
+/* @media screen and (max-width:991px) {
 	 #h2station-info .node-wrapper .station-details-sidebar {
 		float: none;
 		width: 100%;
 		text-align: center;
 		margin: 20px 0 30px;
-	}
+	} */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -47,3 +45,82 @@
 #h2station-info {
     -ms-overflow-style: none;
 }
+
+
+#react-entry-poin, html, body {
+	height: 100vh;
+	width: 100%;
+	overflow:hidden;
+}
+
+
+
+#h2station-container {
+	display: flex;
+	/* flex-grow: 1; */
+	flex-direction: row;
+	/* align-content: stretch;
+	height: 100%;*/
+	align-items: stretch;
+	width: 100%; 
+}
+
+
+
+#h2station-map-container {
+	/* display: flex; */
+	width: 60%;
+	padding: 2rem;
+	height: calc(100vh - 14rem - 1px);
+}
+
+#station-map {
+	width: 100%;
+}
+
+#h2station-info {
+	/* display: flex; */
+	display: block;
+	width: 40%;
+	padding: 3rem;
+	height: calc(100vh - 14rem - 1px);
+	overflow-y: scroll;
+	flex: 1,1,auto
+}
+
+
+
+
+/*
+  ##Device = Most of the Smartphones Mobiles / ipad (Portrait)
+  */
+  @media only screen and (max-width: 950px) {
+	  
+	#big-app-container {
+		padding: 1rem;
+		flex: none;
+		/* flex-direction: column; */
+	}
+
+
+	#h2station-container {
+		flex-direction: column;
+		padding:0;
+	}
+	#h2station-map-container {
+		width: 95%;
+		padding: 0.5rem;
+		height: calc((100vh - 5rem) *0.3 );
+	}
+
+	#h2station-info {
+		width: 100%;
+		height: calc((100vh - 5rem) *0.45 );
+	}
+
+	#react-entry-poin, html, body {
+		overflow:auto;
+	}
+
+
+  }

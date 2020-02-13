@@ -96,13 +96,13 @@ app.layout = html.Div(
             ],
         ),
         html.Div(
-            className = "view view-h2stationmaps-v2 view-id-h2stationmaps_v2 view-display-id-page",
+            id = "app-container",
             # style={"width": "100%","height":"100%", "background-color": "rgba(255, 255, 255, 0.01)"},
-            style={"width": "100%","height":"80%", "padding": "2em"},
+            # style={"width": "100%","height":"80%", "padding": "2em"},
             children = [
                 html.Div(
-                    # id = "station-map",
-                    style={"width": "60%","height":"50em","float":"left", "display":"block","padding": "1em"},
+                    id = "h2station-map-container",
+                    # style={"width": "60%","height":"50em","float":"left", "display":"block","padding": "1em"},
                     children = [
                         dcc.Graph(id="station-map", figure=fig, style={"height":"100%"}),
                         userComp.generateModal()
@@ -111,7 +111,7 @@ app.layout = html.Div(
                 html.Div(
                     id = "h2station-info" ,
                     # className = "row",
-                    style = {"width": "35%",  "height": "50em","float":"left","padding": "1em","overflow-y": "auto","overflow-x": "hidden"}, #"overflow-y": "scroll",
+                    # style = {"width": "35%",  "height": "50em","float":"left","padding": "1em","overflow-y": "auto","overflow-x": "hidden"}, #"overflow-y": "scroll",
                     children = html.Div(
                         className = "node-wrapper",
                         id = "station-info" ,
