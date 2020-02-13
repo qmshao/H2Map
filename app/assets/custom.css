@@ -587,9 +587,9 @@ body {
     font-size: 1.3rem;
   }
 
-  #big-app-container {
+  /* #big-app-container {
     padding: 1rem;
-  }
+  } */
 
   .banner {
     flex-direction: column-reverse;
