@@ -18,7 +18,7 @@ import dash_dangerously_set_inner_html
 
 import lib.userComponent as userComp
 
-with open('StationInfo2.json', 'r') as f:
+with open('StationInfo3.json', 'r') as f:
     stationInfo = json.load(f)    
 
 
@@ -26,9 +26,13 @@ with open('StationInfo2.json', 'r') as f:
 lat0 = (max(stationInfo['lat']) + min(stationInfo['lat']))/2
 lon0 = (max(stationInfo['lon']) + min(stationInfo['lon']))/2
 
-# print(stationLatitude)
-
-
+typeList = {}
+for i in range(len(stationInfo['type'])):
+    Type = stationInfo['type'][i]
+    if not (Type in typeList):
+        typeList[Type] = [i]
+    else:
+        typeList[Type].append(i)
 
 app = dash.Dash(
     __name__,
