@@ -9,6 +9,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+import plotly.graph_objs as go
 
 
 import json
@@ -134,7 +135,39 @@ def updateStationInfo(clickPt):
 
         info = [ 
             dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index]),
-            userComp.makeDashTable(stationInfo['table'][index])
+            html.Div(
+                # style = {"display":"flex"},
+                children = [
+                    userComp.makeFlexTable(stationInfo['table'][index], 'status-table'),
+                    html.Div(
+                        style = {"display":"flex", "flex-wrap": "wrap", "justify-content": "center"},
+                        children = [
+                            dcc.Graph(
+                                id='graph-kpi1',
+                                # style = {"width":"calc((100vw)/6  - 4rem)", "padding":"1rem", "height":"15rem"},
+                                figure= go.Figure(
+                                    data=[go.Scatter(x=[1, 2, 3], y=[4, 1, 2])],
+                                    layout = go.Layout(
+                                        margin=dict(t=30, b=10, l=10, r=10),
+                                        title="KPI 1"),
+                                
+                                )
+                            ),
+                            dcc.Graph(
+                                id='graph-kpi2',
+                                # style = {"width":"calc((100vw)/6 - 4rem)", "padding":"1rem", "height":"15rem"},
+                                figure= go.Figure(
+                                    data=[go.Bar(x=[1, 2, 3], y=[4, 1, 2])],
+                                    layout = go.Layout(
+                                        margin=dict(t=30, b=10, l=10, r=10),
+                                        title="KPI 2"),
+                                
+                                )
+                            ),
+                        ],
+                    ),
+                ],
+            )
         ]
 
     else:
@@ -164,4 +197,4 @@ def updateMap(selected):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=False, host='0.0.0.0')
+    app.run_server(debug=True, host='0.0.0.0', port=3800)

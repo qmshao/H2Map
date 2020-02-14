@@ -109,7 +109,7 @@ def filterCell(content):
     return content
 
 
-def makeDashTable(data):
+def makeDashTable(data, Id=None):
     """ Return a dash definition of an HTML table for a Pandas dataframe """
     table = []
 
@@ -118,18 +118,47 @@ def makeDashTable(data):
         if i%2:
             # Temp
             if i>=8:
+                break
                 html_row.append(el)
             elif i==7:
                 html_row.append(html.Td(html.Div('Limited', style={"background-color":"yellow"})))
             else:
                 html_row.append(html.Td(html.Div('Online', style={"background-color":"green"})))
-            table.append(html.Tr(html_row))
+
+            if (i+1)%4 == 0:
+                table.append(html.Tr(html_row))
             
+        elif i%4:
+            html_row.append(el)
         else:
             html_row = [el]
         
     
-    return html.Table(table)
+    return html.Table(table, id = Id)
+
+
+def makeFlexTable(data, Id = None):
+    """ Return a dash definition of an HTML table for a Pandas dataframe """
+    table = []
+
+    for i in range(len(data)):
+        if i>=8:
+            break
+
+        if i%2:
+            continue
+        cell = html.Table(html.Tr(
+            children = [
+                html.Td(filterCell(data[i])),
+                html.Td(html.Div('Online', style={"background-color":"green"})),
+            ],
+        ))
+        table.append(cell)
+
+
+                
+    return html.Div(children = table, id = Id, 
+        style={"display":"flex", "flex-wrap":"wrap","justify-content": "center"})
 
 
 def generateModal():
