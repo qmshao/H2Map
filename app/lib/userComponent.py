@@ -116,8 +116,15 @@ def makeDashTable(data):
     for i in range(len(data)):
         el = html.Td(filterCell(data[i]))
         if i%2:
-            html_row.append(el)
+            # Temp
+            if i>=8:
+                html_row.append(el)
+            elif i==7:
+                html_row.append(html.Td(html.Div('Limited', style={"background-color":"yellow"})))
+            else:
+                html_row.append(html.Td(html.Div('Online', style={"background-color":"green"})))
             table.append(html.Tr(html_row))
+            
         else:
             html_row = [el]
         
