@@ -1,6 +1,41 @@
 import dash_html_components as html
 import dash_core_components as dcc
+import plotly.graph_objs as go
 import re
+
+def generateMap(stationInfo, typeList, selected):
+    lat0 = (max(stationInfo['lat']) + min(stationInfo['lat']))/2
+    lon0 = (max(stationInfo['lon']) + min(stationInfo['lon']))/2
+
+
+    
+    
+    trace = go.Scattermapbox(
+        lat=stationInfo['lat'],
+        lon=stationInfo['lon'],
+        mode="markers",
+        marker = dict(
+            size = 15,
+        ),
+        hovertext=stationInfo['name'],
+        # color_discrete_sequence=["fuchsia"], 
+        # zoom=3, 
+        # height=300,
+    )
+
+
+    
+    layout = go.Layout(
+        mapbox_style="open-street-map",
+        margin={"r":0,"t":0,"l":0,"b":0},
+        mapbox = dict(
+            zoom=5,
+            center=dict(lat=lat0,lon=lon0)
+        )
+    )
+    return go.Figure(data=[trace], layout=layout)
+
+
 
 def filterCell(content):
     content = re.sub(r'<div(.*?)</div>', '', content)

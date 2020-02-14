@@ -10,7 +10,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
-import plotly.graph_objs as go
 
 import json
 import requests
@@ -21,10 +20,6 @@ import lib.userComponent as userComp
 with open('StationInfo3.json', 'r') as f:
     stationInfo = json.load(f)    
 
-
-
-lat0 = (max(stationInfo['lat']) + min(stationInfo['lat']))/2
-lon0 = (max(stationInfo['lon']) + min(stationInfo['lon']))/2
 
 typeList = {}
 for i in range(len(stationInfo['type'])):
@@ -42,32 +37,12 @@ app = dash.Dash(
 )
 
 
+
 # Map
-trace = go.Scattermapbox(
-# trace = go.Choroplethmapbox(    
-    lat=stationInfo['lat'],
-    lon=stationInfo['lon'],
-    mode="markers",
-    marker = dict(
-        size = 15,
-    ),
-    hovertext=stationInfo['name'],
-    # color_discrete_sequence=["fuchsia"], 
-    # zoom=3, 
-    # height=300,
-)
+selected = []
+fig = userComp.generateMap(stationInfo, typeList, selected)
 
 
-layout = go.Layout(
-    mapbox_style="open-street-map",
-    margin={"r":0,"t":0,"l":0,"b":0},
-    mapbox = dict(
-        zoom=5,
-        center=dict(lat=lat0,lon=lon0)
-    )
-)
-
-fig = go.Figure(data=[trace], layout=layout)
 
 # Static Intro
 staticIntro =  dcc.Markdown(
@@ -153,19 +128,19 @@ def updateStationInfo(clickPt):
     return info
 
 # ======= Callbacks for modal popup =======
-@app.callback(
-    Output("markdown", "style"),
-    [Input("h2station-info", "n_clicks"), Input("markdown_close", "n_clicks")],
-)
-def update_click_output(button_click, close_click):
-    ctx = dash.callback_context
+# @app.callback(
+#     Output("markdown", "style"),
+#     [Input("h2station-info", "n_clicks"), Input("markdown_close", "n_clicks")],
+# )
+# def update_click_output(button_click, close_click):
+#     ctx = dash.callback_context
 
-    if ctx.triggered:
-        prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        if prop_id == "h2station-info":
-            return {"display": "block"}
+#     if ctx.triggered:
+#         prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+#         if prop_id == "h2station-info":
+#             return {"display": "block"}
 
-    return {"display": "none"}
+#     return {"display": "none"}
 
 # Running the server
 if __name__ == "__main__":
