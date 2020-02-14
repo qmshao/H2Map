@@ -14,20 +14,33 @@ from dash.dependencies import Input, Output, State
 import json
 import requests
 import dash_dangerously_set_inner_html
+import numpy as np
 
 import lib.userComponent as userComp
 
+
+# Load and Preprocess Data
 with open('StationInfo3.json', 'r') as f:
     stationInfo = json.load(f)    
 
+numStation = len(stationInfo['name'])
+
 
 typeList = {}
-for i in range(len(stationInfo['type'])):
+
+
+for i in range(numStation):
     Type = stationInfo['type'][i]
     if not (Type in typeList):
         typeList[Type] = [i]
     else:
         typeList[Type].append(i)
+
+stationInfo['lat'] = np.array(stationInfo['lat'])
+stationInfo['lon'] = np.array(stationInfo['lon'])
+stationInfo['name'] = np.array(stationInfo['name'])
+
+
 
 app = dash.Dash(
     __name__,
@@ -39,8 +52,8 @@ app = dash.Dash(
 
 
 # Map
-selected = []
-fig = userComp.generateMap(stationInfo, typeList, selected)
+defaultSelected = ['open','development','bus']
+fig = userComp.generateMap(stationInfo, typeList, defaultSelected)
 
 
 
@@ -84,7 +97,8 @@ app.layout = html.Div(
                     id = "h2station-map-container",
                     # style={"width": "60%","height":"50em","float":"left", "display":"block","padding": "1em"},
                     children = [
-                        dcc.Graph(id="station-map", figure=fig, style={"height":"100%"}),
+                        dcc.Graph(id="station-map"),
+                        userComp.generateFilter(defaultSelected),
                         userComp.generateModal()
                     ],
                 ),
@@ -126,6 +140,12 @@ def updateStationInfo(clickPt):
     else:
         info = staticIntro
     return info
+
+@app.callback(
+    Output("station-map", "figure"),
+    [dash.dependencies.Input('map-filter', 'value')])
+def updateMap(selected):
+    return userComp.generateMap(stationInfo, typeList, selected)
 
 # ======= Callbacks for modal popup =======
 # @app.callback(

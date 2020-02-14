@@ -67,7 +67,14 @@
 }
 
 #station-map {
+	height: 100%;
 	width: 100%;
+}
+
+
+div#map-filter {
+	top: calc((100vh - 14rem - 1px)*-1);;
+	position: relative;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -149,6 +156,10 @@
 	#react-entry-poin, html, body {
 		overflow:auto;
 	}
-
+	
+	div#map-filter {
+		top: calc((100vh - 12rem) *-0.4 );
+		position: relative;
+	}
 
   }
