@@ -145,6 +145,10 @@ div#map-filter {
 	width:50%;
 }
 
+#status-table {
+	padding: 2rem 0;
+}
+
 #kpigraph-container{
 	display: flex;
 	flex-wrap: wrap;
@@ -202,6 +206,9 @@ div#map-filter {
 		/* padding: 0 2rem 0 2rem; */
 	}
 
+	#status-table {
+		padding: 1rem 0;
+	}
 
   }
 

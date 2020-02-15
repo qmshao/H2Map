@@ -63,6 +63,7 @@ app = dash.Dash(
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"}
     ],
 )
+server = app.server
 
 
 
