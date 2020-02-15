@@ -16,6 +16,7 @@ import json
 import requests
 import dash_dangerously_set_inner_html
 import numpy as np
+import re
 
 import lib.userComponent as userComp
 
@@ -26,10 +27,8 @@ with open('StationInfo3.json', 'r') as f:
 
 numStation = len(stationInfo['name'])
 
-
+# Upate station type list
 typeList = {}
-
-
 for i in range(numStation):
     Type = stationInfo['type'][i]
     if not (Type in typeList):
@@ -37,9 +36,24 @@ for i in range(numStation):
     else:
         typeList[Type].append(i)
 
+# Convert to np array
 stationInfo['lat'] = np.array(stationInfo['lat'])
 stationInfo['lon'] = np.array(stationInfo['lon'])
 stationInfo['name'] = np.array(stationInfo['name'])
+
+# Process HTML
+stationLogo = []
+for i in range(numStation):
+    htmlStr = stationInfo['html'][i]
+    idx = htmlStr.find(r'<div class="station-details-sidebar">')
+    stationInfo['html'][i] = htmlStr[:idx]
+
+    res = re.search(r'"https://cafcp.org/sites/default/files/styles/thumbnail/public/images/station_logos/(.*?)\"', htmlStr)
+    if res:
+        stationLogo.append(res.group()[1:-1])
+    else:
+        stationLogo.append(None)
+
 
 
 
@@ -134,13 +148,15 @@ def updateStationInfo(clickPt):
         print(stationInfo['name'][index] + ' clicked')
 
         info = [ 
+            html.Img(src = stationLogo[index], className = "station-logo"),
             dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index]),
             html.Div(
                 # style = {"display":"flex"},
                 children = [
                     userComp.makeFlexTable(stationInfo['table'][index], 'status-table'),
                     html.Div(
-                        style = {"display":"flex", "flex-wrap": "wrap", "justify-content": "center"},
+                        id = "kpigraph-container",
+                        # style = {"display":"flex", "flex-wrap": "wrap", "justify-content": "center"},
                         children = [
                             dcc.Graph(
                                 id='graph-kpi1',
@@ -149,8 +165,10 @@ def updateStationInfo(clickPt):
                                     data=[go.Scatter(x=[1, 2, 3], y=[4, 1, 2])],
                                     layout = go.Layout(
                                         margin=dict(t=30, b=10, l=10, r=10),
-                                        title="KPI 1"),
-                                
+                                        title="KPI 1",
+                                        yaxis= dict(fixedrange= True),
+                                        xaxis= dict(fixedrange= True),
+                                    ),
                                 )
                             ),
                             dcc.Graph(
@@ -160,7 +178,10 @@ def updateStationInfo(clickPt):
                                     data=[go.Bar(x=[1, 2, 3], y=[4, 1, 2])],
                                     layout = go.Layout(
                                         margin=dict(t=30, b=10, l=10, r=10),
-                                        title="KPI 2"),
+                                        title="KPI 2",
+                                        yaxis= dict(fixedrange= True),
+                                        xaxis= dict(fixedrange= True),
+                                    ),
                                 
                                 )
                             ),
@@ -197,4 +218,4 @@ def updateMap(selected):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=True, host='0.0.0.0', port=3800)
+    app.run_server(debug=False, host='0.0.0.0', port=3800)
