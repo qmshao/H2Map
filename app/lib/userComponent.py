@@ -9,15 +9,19 @@ colorSet = {
     "development": 'Yellow',
     'not-operational': 'LightGrey',
     'bus':  'DodgerBlue',
-    'truck': 'Navy'
+    'truck': 'Navy',
+    'truckstop': 'Red',
+    'transithub': 'Pink'
 }
 
 nameSet = {
-    "open" : 'Open',
+    "open" : 'Open Station',
     "development": 'In Devolopment',
     'not-operational': 'Not Operational',
     'bus':  'Bus',
-    'truck': 'Truck' 
+    'truck': 'Truck',
+    'truckstop': 'Truck Stop',
+    'transithub': 'Transit Hub'
 }
 
 
@@ -25,12 +29,14 @@ def generateFilter(defaultFilter):
     filter = dcc.Dropdown(
         id = "map-filter",
         options=[
-            {'label': 'Open', 'value': 'open'},
+            {'label': 'Open Station', 'value': 'open'},
             # {'label': 'Retail: Limited', 'value': 'limited'},
             {'label': 'In Devolopment', 'value': 'development'},
             {'label': 'Not Operational', 'value': 'not-operational'},
             {'label': 'Bus', 'value': 'bus'},
-            {'label': 'Truck', 'value': 'truck'}
+            {'label': 'Truck', 'value': 'truck'},
+            {'label': 'Truck Stop', 'value': 'truckstop'},
+            {'label': 'Transit Hub', 'value': 'transithub'},
         ],
         multi=True,
         value=defaultFilter,

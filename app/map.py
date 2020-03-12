@@ -22,10 +22,12 @@ import lib.userComponent as userComp
 
 
 # Load and Preprocess Data
-with open('StationInfo3.json', 'r') as f:
+with open('data/StationInfo3.json', 'r') as f:
     stationInfo = json.load(f)    
 
 numStation = len(stationInfo['name'])
+meanLat = np.average(stationInfo['lat'])
+meanLon = np.average(stationInfo['lon'])
 
 # Upate station type list
 typeList = {}
@@ -36,10 +38,36 @@ for i in range(numStation):
     else:
         typeList[Type].append(i)
 
+
+# Load Truck Stop and Transit Hub
+with open('data/truckstop2.json', 'r') as f:
+    truckStop = json.load(f)   
+
+filteredIdx = np.logical_and(np.abs(truckStop['lat'] - meanLat)<10, np.abs(truckStop['lon'] - meanLon)<10)
+truckStop['lat'] = np.array(truckStop['lat'])[filteredIdx]
+truckStop['lon'] = np.array(truckStop['lon'])[filteredIdx]
+truckStop['name'] = np.array(truckStop['name'])[filteredIdx]
+
+with open('data/transithub2.json', 'r') as f:
+    transitHub = json.load(f)    
+filteredIdx = np.logical_and(np.abs(transitHub['lat'] - meanLat)<10, np.abs(transitHub['lon'] - meanLon)<10)
+transitHub['lat'] = np.array(transitHub['lat'])[filteredIdx]
+transitHub['lon'] = np.array(transitHub['lon'])[filteredIdx]
+transitHub['name'] = np.array(transitHub['name'])[filteredIdx]
+
+# Type List
+numTruckStop = len(truckStop['name'])
+numTransitHub = len(transitHub['name'])
+typeList['truckstop'] = [numStation + i for i in range(numTruckStop)]
+typeList['transithub'] = [numStation + numTruckStop + i for i in range(numTransitHub)]
+
 # Convert to np array
-stationInfo['lat'] = np.array(stationInfo['lat'])
-stationInfo['lon'] = np.array(stationInfo['lon'])
-stationInfo['name'] = np.array(stationInfo['name'])
+stationInfo['lat'] = np.concatenate([stationInfo['lat'], truckStop['lat'], transitHub['lat']])
+stationInfo['lon'] = np.concatenate([stationInfo['lon'], truckStop['lon'], transitHub['lon']])
+stationInfo['name'] = np.concatenate([stationInfo['name'], truckStop['name'], transitHub['name']])
+
+
+
 
 # Process HTML
 stationLogo = []
@@ -68,7 +96,7 @@ server = app.server
 
 
 # Map
-defaultSelected = ['open','development','bus']
+defaultSelected = ['truckstop','transithub', 'open']
 fig = userComp.generateMap(stationInfo, typeList, defaultSelected)
 
 
@@ -97,8 +125,8 @@ app.layout = html.Div(
                 html.Div(
                     id="banner-text",
                     children=[
-                        html.H5("Interactive Map Demo"),
-                        html.H6("This is a Demo for H2 Station Map Test"),
+                        html.H5("H2 for Mobility Visualization"),
+                        html.H6("© 2020 AP Network Optimization Team"),
                     ],
                 ),
             ],
@@ -118,16 +146,16 @@ app.layout = html.Div(
                         userComp.generateModal()
                     ],
                 ),
-                html.Div(
-                    id = "h2station-info" ,
-                    # className = "row",
-                    # style = {"width": "35%",  "height": "50em","float":"left","padding": "1em","overflow-y": "auto","overflow-x": "hidden"}, #"overflow-y": "scroll",
-                    children = html.Div(
-                        className = "node-wrapper",
-                        id = "station-info" ,
-                        children = staticIntro,
-                    ),
-                ),
+                # html.Div(
+                #     id = "h2station-info" ,
+                #     # className = "row",
+                #     # style = {"width": "35%",  "height": "50em","float":"left","padding": "1em","overflow-y": "auto","overflow-x": "hidden"}, #"overflow-y": "scroll",
+                #     children = html.Div(
+                #         className = "node-wrapper",
+                #         id = "station-info" ,
+                #         children = staticIntro,
+                #     ),
+                # ),
             ],
         ),
     ]
@@ -137,64 +165,64 @@ app.layout = html.Div(
 
 
 
-@app.callback(
-    Output("station-info", "children"),
-    [
-        Input("station-map", "clickData"),
-    ],
-)
-def updateStationInfo(clickPt):
-    if (clickPt):
-        index = clickPt['points'][0]['pointIndex']
-        print(stationInfo['name'][index] + ' clicked')
+# @app.callback(
+#     Output("station-info", "children"),
+#     [
+#         Input("station-map", "clickData"),
+#     ],
+# )
+# def updateStationInfo(clickPt):
+#     if (clickPt):
+#         index = clickPt['points'][0]['pointIndex']
+#         print(stationInfo['name'][index] + ' clicked')
 
-        info = [ 
-            html.Img(src = stationLogo[index], className = "station-logo"),
-            dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index]),
-            html.Div(
-                # style = {"display":"flex"},
-                children = [
-                    userComp.makeFlexTable(stationInfo['table'][index], 'status-table'),
-                    html.Div(
-                        id = "kpigraph-container",
-                        # style = {"display":"flex", "flex-wrap": "wrap", "justify-content": "center"},
-                        children = [
-                            dcc.Graph(
-                                id='graph-kpi1',
-                                # style = {"width":"calc((100vw)/6  - 4rem)", "padding":"1rem", "height":"15rem"},
-                                figure= go.Figure(
-                                    data=[go.Scatter(x=[1, 2, 3], y=[4, 1, 2])],
-                                    layout = go.Layout(
-                                        margin=dict(t=30, b=10, l=10, r=10),
-                                        title="KPI 1",
-                                        yaxis= dict(fixedrange= True),
-                                        xaxis= dict(fixedrange= True),
-                                    ),
-                                )
-                            ),
-                            dcc.Graph(
-                                id='graph-kpi2',
-                                # style = {"width":"calc((100vw)/6 - 4rem)", "padding":"1rem", "height":"15rem"},
-                                figure= go.Figure(
-                                    data=[go.Bar(x=[1, 2, 3], y=[4, 1, 2])],
-                                    layout = go.Layout(
-                                        margin=dict(t=30, b=10, l=10, r=10),
-                                        title="KPI 2",
-                                        yaxis= dict(fixedrange= True),
-                                        xaxis= dict(fixedrange= True),
-                                    ),
+#         info = [ 
+#             html.Img(src = stationLogo[index], className = "station-logo"),
+#             dash_dangerously_set_inner_html.DangerouslySetInnerHTML(stationInfo['html'][index]),
+#             html.Div(
+#                 # style = {"display":"flex"},
+#                 children = [
+#                     userComp.makeFlexTable(stationInfo['table'][index], 'status-table'),
+#                     html.Div(
+#                         id = "kpigraph-container",
+#                         # style = {"display":"flex", "flex-wrap": "wrap", "justify-content": "center"},
+#                         children = [
+#                             dcc.Graph(
+#                                 id='graph-kpi1',
+#                                 # style = {"width":"calc((100vw)/6  - 4rem)", "padding":"1rem", "height":"15rem"},
+#                                 figure= go.Figure(
+#                                     data=[go.Scatter(x=[1, 2, 3], y=[4, 1, 2])],
+#                                     layout = go.Layout(
+#                                         margin=dict(t=30, b=10, l=10, r=10),
+#                                         title="KPI 1",
+#                                         yaxis= dict(fixedrange= True),
+#                                         xaxis= dict(fixedrange= True),
+#                                     ),
+#                                 )
+#                             ),
+#                             dcc.Graph(
+#                                 id='graph-kpi2',
+#                                 # style = {"width":"calc((100vw)/6 - 4rem)", "padding":"1rem", "height":"15rem"},
+#                                 figure= go.Figure(
+#                                     data=[go.Bar(x=[1, 2, 3], y=[4, 1, 2])],
+#                                     layout = go.Layout(
+#                                         margin=dict(t=30, b=10, l=10, r=10),
+#                                         title="KPI 2",
+#                                         yaxis= dict(fixedrange= True),
+#                                         xaxis= dict(fixedrange= True),
+#                                     ),
                                 
-                                )
-                            ),
-                        ],
-                    ),
-                ],
-            )
-        ]
+#                                 )
+#                             ),
+#                         ],
+#                     ),
+#                 ],
+#             )
+#         ]
 
-    else:
-        info = staticIntro
-    return info
+#     else:
+#         info = staticIntro
+#     return info
 
 @app.callback(
     Output("station-map", "figure"),
